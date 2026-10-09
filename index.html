@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KEL 5 — Marketplace</title><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- LOGIN / DAFTAR -->
+<div id="authPage" class="auth-page hidden">
+  <div class="auth-card">
+    <div class="auth-brand"><span class="auth-logo">KEL 5</span></div>
+    <button class="auth-close" onclick="closeAuth()">✕</button><h1 id="authTitle">Masuk ke KEL 5</h1><p id="authSubtitle">Masuk untuk melanjutkan pembelian.</p>
+    <form id="authForm">
+      <div id="nameGroup" class="field hidden"><label>Nama Lengkap</label><input id="authName" type="text" placeholder="Contoh: Alkey"></div>
+      <div class="field"><label id="identityLabel">Email</label><input id="authUsername" type="email" placeholder="Contoh: nama@email.com" autocomplete="username" required></div>
+      <div id="emailGroup" class="field hidden"><label>Email</label><input id="authEmail" type="email" placeholder="Contoh: alkey@email.com"></div>
+      <div class="field"><label>Password</label><input id="authPassword" type="password" placeholder="Minimal 6 karakter" autocomplete="current-password" required></div>
+      <div id="confirmGroup" class="field hidden"><label>Konfirmasi Password</label><input id="authConfirm" type="password" placeholder="Ulangi password"></div>
+      <button class="auth-btn" type="submit" id="authSubmit">Masuk</button>
+    </form>
+    <p id="authMessage" class="auth-message"></p>
+    <button class="switch-btn" id="switchAuth">Belum punya akun? <b>Daftar</b></button>
+    <button class="guest-continue" onclick="closeAuth()">Lanjut lihat produk</button>
+  </div>
+</div>
+
+<!-- TOKO -->
+<div id="storePage" class="hidden">
+<header class="topbar">
+  <div class="top-inner">
+    <a class="brand" href="#home"><span>KEL 5</span></a>
+    <div class="search-wrap"><div class="searchbar google-search"><input id="marketSearch" placeholder="Cari di sini" oninput="syncSearch()" aria-label="Cari produk KEL 5"><button class="search-submit" type="button" onclick="runMarketSearch()" aria-label="Cari"><span class="magnifier"></span></button></div></div>
+    <button class="top-icon" onclick="openCart()">🛒<i id="marketCartCount">0</i></button>
+    <button class="top-icon desktop-only profile-top-btn" onclick="showAccount()"><span id="topProfileAvatar">👤</span></button>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="home">
+  <div class="hero-banner"><div><small>🔥 PROMO SPESIAL DIMSUM</small><h1>Belanja hemat,<br>pilihan lebih banyak.</h1><p>Temukan produk pilihan dengan harga menarik dan proses checkout yang mudah.</p><button onclick="scrollProducts()">Belanja Sekarang</button></div><div class="hero-art">🛍️<strong>DISKON<br><em>50%</em></strong></div></div>
+</section>
+
+<section class="quick-cats page-width" id="menuProduk">
+ <div class="section-title"><h2>Pilihan DIMSUM</h2><span>Jelajahi produk</span></div>
+ <div class="cat-row">
+  <button onclick="setProductTab('Semua',this)"><b>🛍️</b><span>Semua Produk</span></button><button onclick="setProductTab('Terlaris',this)"><b>🔥</b><span>Terlaris</span></button><button onclick="setProductTab('Promo',this)"><b>🏷️</b><span>Promo</span></button><button onclick="setProductTab('Baru',this)"><b>✨</b><span>Terbaru</span></button>
+ </div>
+</section>
+
+<section class="promo-strip page-width"><b>⚡ FLASH SALE</b><span>Promo produk pilihan hari ini</span><strong>01 : 43 : 22</strong><a href="#produk">Lihat semua ›</a></section>
+
+<section class="page-width product-section" id="produk">
+ <div class="section-title"><h2>Produk DIMSUM</h2><span>Favorit pelanggan</span></div>
+ <div class="filter-row"><button class="active" onclick="setProductTab('Semua',this)">Semua</button><button onclick="setProductTab('Terlaris',this)">Terlaris</button><button onclick="setProductTab('Promo',this)">Promo</button><button onclick="setProductTab('Baru',this)">Terbaru</button></div>
+ <div class="products" id="productGrid"></div>
+</section>
+
+<section class="page-width about" id="tentang"><div><small>TENTANG KEL 5</small><h2>Marketplace sederhana untuk kebutuhan sehari-hari.</h2></div><p>KEL 5 dibuat sebagai konsep e-commerce mahasiswa dengan fitur akun, produk, keranjang, pesanan dan checkout.</p></section>
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+ <button id="navHome" class="active" onclick="goHome()"><span>⌂</span>Beranda</button>
+ <button id="navLive" onclick="showLive()"><span>▶</span>Live &amp; Video</button>
+ <button id="navOrders" onclick="showOrders()"><span>▤</span>Pesanan</button>
+ <button id="navCart" class="cart-bottom" onclick="openCart()"><span>🛒<i id="bottomCartCount">0</i></span>Keranjang</button>
+ <button id="navAccount" onclick="showAccount()"><span id="bottomProfileAvatar">♙</span>Akun</button>
+</nav>
+
+<!-- CART -->
+<div class="overlay" id="overlay" onclick="closeCart()"></div>
+<aside class="cart" id="cart"><div class="cart-head"><h2>Keranjang</h2><button onclick="closeCart()">✕</button></div><div id="cartItems" class="cart-items"></div><div class="cart-bottom"><div class="selected-summary"><span id="cartSelectedCount">0 produk dipilih</span><strong id="cartGrandTotal">Rp0</strong></div><div><span>Total dipilih</span><strong id="cartTotal">Rp0</strong></div><button onclick="openCheckout()">Checkout</button></div></aside>
+
+<!-- CHECKOUT -->
+<div class="modal-overlay" id="checkoutOverlay"><div class="checkout-modal"><div class="checkout-head"><button onclick="closeCheckout()">‹</button><h2>Checkout</h2><button onclick="closeCheckout()">✕</button></div>
+ <div class="checkout-scroll">
+  <section class="checkout-card"><div class="location">📍</div><div><b>Alamat Pengiriman</b><h3 id="checkoutName">-</h3><p id="checkoutAddress">Jl. Sepakat No. 12, Pontianak, Kalimantan Barat</p></div><button>›</button></section>
+  <section class="checkout-card"><div class="card-title"><b>Produk</b><span id="checkoutItemsText">1 Produk</span></div><div id="checkoutProducts"></div></section>
+  <section class="checkout-card"><div class="card-title"><b>Voucher</b><span class="green">Gratis Ongkir ›</span></div></section>
+  <section class="checkout-card shipping-card" onclick="openShipping()"><div class="card-title"><b>Jasa Pengiriman</b><button onclick="event.stopPropagation();openShipping()">Lihat Semua ›</button></div><div id="selectedShipping" class="selected-payment"><img src="assets/jnt.svg"><div><b>J&T Express</b><span>Estimasi 2–4 hari · Rp12.000</span></div><strong>✓</strong></div></section>
+  <section class="checkout-card payment-card" onclick="openPayment()"><div class="card-title"><b>Metode Pembayaran</b><button onclick="event.stopPropagation();openPayment()">Lihat Semua ›</button></div><div id="selectedPayment" class="selected-payment"><img src="assets/bri.svg"><div><b>Transfer Bank</b><span>BRI</span></div><strong>✓</strong></div></section>
+  <section class="checkout-card"><h3>Rincian Pembayaran</h3><div class="detail"><span>Subtotal Pesanan</span><b id="checkoutSubtotal">Rp0</b></div><div class="detail"><span>Subtotal Pengiriman</span><b>Rp12.000</b></div><div class="detail"><span>Biaya Layanan</span><b>Rp2.000</b></div></section>
+ </div><div class="checkout-footer"><div><small>Total</small><strong id="checkoutTotal">Rp0</strong></div><button onclick="placeOrder()">Buat Pesanan</button></div>
+</div></div>
+
+<!-- PAYMENT -->
+<div class="modal-overlay" id="paymentOverlay"><div class="payment-modal"><div class="checkout-head"><button onclick="closePayment()">‹</button><h2>Metode Pembayaran</h2><button onclick="closePayment()">✕</button></div><div class="payment-list">
+ <p>Transfer Bank</p><button onclick="selectPayment('BRI','assets/bri.svg')"><img src="assets/bri.svg"><span>BRI</span><i>○</i></button>
+ <button onclick="selectPayment('BCA','assets/bca.svg')"><img src="assets/bca.svg"><span>BCA</span><i>○</i></button>
+ <button onclick="selectPayment('BNI','assets/bni.svg')"><img src="assets/bni.svg"><span>BNI</span><i>○</i></button>
+ <button onclick="selectPayment('Mandiri','assets/mandiri.svg')"><img src="assets/mandiri.svg"><span>Mandiri</span><i>○</i></button>
+ <p>E-Wallet</p><button onclick="selectPayment('DANA','assets/dana.svg')"><img src="assets/dana.svg"><span>DANA</span><i>○</i></button><button onclick="selectPayment('OVO','assets/ovo.svg')"><img src="assets/ovo.svg"><span>OVO</span><i>○</i></button><button onclick="selectPayment('GoPay','assets/gopay.svg')"><img src="assets/gopay.svg"><span>GoPay</span><i>○</i></button>
+ <p>Metode Lain</p><button onclick="selectPayment('COD','assets/cod.svg')"><img src="assets/cod.svg"><span>COD (Bayar di Tempat)</span><i>○</i></button>
+ </div><button class="confirm-payment" onclick="confirmPayment()">Konfirmasi</button></div></div>
+
+<!-- SHIPPING -->
+<div class="modal-overlay" id="shippingOverlay"><div class="payment-modal"><div class="checkout-head"><button onclick="closeShipping()">‹</button><h2>Jasa Pengiriman</h2><button onclick="closeShipping()">✕</button></div><div class="payment-list">
+ <p>Kurir Reguler</p>
+ <button onclick="selectShipping('JNE','assets/jne.svg','Estimasi 2–4 hari','Rp12.000')"><img src="assets/jne.svg"><span>JNE Express</span><small>2–4 hari · Rp12.000</small><i>○</i></button>
+ <button onclick="selectShipping('J&T Express','assets/jnt.svg','Estimasi 2–4 hari','Rp12.000')"><img src="assets/jnt.svg"><span>J&T Express</span><small>2–4 hari · Rp12.000</small><i>○</i></button>
+ <button onclick="selectShipping('SiCepat','assets/sicepat.svg','Estimasi 2–4 hari','Rp13.000')"><img src="assets/sicepat.svg"><span>SiCepat</span><small>2–4 hari · Rp13.000</small><i>○</i></button>
+ <button onclick="selectShipping('AnterAja','assets/anteraja.svg','Estimasi 2–5 hari','Rp11.000')"><img src="assets/anteraja.svg"><span>AnterAja</span><small>2–5 hari · Rp11.000</small><i>○</i></button>
+ <button onclick="selectShipping('POS Indonesia','assets/pos.svg','Estimasi 3–5 hari','Rp10.000')"><img src="assets/pos.svg"><span>POS Indonesia</span><small>3–5 hari · Rp10.000</small><i>○</i></button>
+ <button onclick="selectShipping('Gojek (GoSend)','assets/gojek.svg','Estimasi 1 hari','Rp15.000')"><img src="assets/gojek.svg"><span>Gojek (GoSend)</span><small>Estimasi 1 hari · Rp15.000</small><i>○</i></button>
+ </div><button class="confirm-payment" onclick="confirmShipping()">Konfirmasi</button></div></div>
+
+<!-- SIMPLE PAGES -->
+<div class="simple-modal" id="simpleModal"><div class="simple-card"><button onclick="closeSimple()">✕</button><div id="simpleContent"></div></div></div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+</body></html>
